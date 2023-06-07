@@ -13,6 +13,7 @@ const Rules = () => {
     const today = new Date().toJSON().slice(0, 16)
     const timezoneOffset = -(new Date()).getTimezoneOffset() / 60;
     const [startDate, setStartDate] = useState(today)
+    const [ruleName, setRuleName] = useState('')
     const [executeMinutes, setExecuteMinutes] = useState(0)
     const [shoulderCounter, setShoulderCounter] = useState(0)
     const [stopLoss, setStopLoss] = useState(0)
@@ -21,7 +22,7 @@ const Rules = () => {
     const [insuranceCoefficient, setInsuranceCoefficient] = useState(0)
     const [moneyValue, setMoneyValue] = useState(0)
     const [moneyRange, setMoneyRange] = useState(0)
-
+    const [toggleRuleBtn, setToggleRuleBtn] = useState(false)
     const [typeOfBot, setTypeOfBot] = useState('')
     const [exchange, setExchange] = useState('')
     const [coin, setCoin] = useState('')
@@ -75,20 +76,27 @@ const Rules = () => {
 
     const [ruleModules, setRuleModules] = useState([])
 
-    const RuleModule = (type) => {
-        const ruleType = type.type
-        console.log(ruleModules.length)
-        let delKey = ruleModules.length
+    // const RuleModule = (type) => {
+    //     const ruleType = type.type
+    //     let delKey = ruleModules.length
         // const key = ruleModules.length
 
+        const deleteRuleModule = (module) => {
+            setRuleModules( currentModules => {
+                return currentModules.filter(ruleModule => ruleModule.props.delKey !== module)
+            })
+            console.log(ruleModules.map(ruleModule => console.log(ruleModule.props.delKey)))
+        }
+
         const IfRule = (delKey) => {
+            // console.log(delKey.delKey + 1)
             return (
                 <div className="rulemodule">
                     <header className='rulemodule__header' style={{}}>
                         <span style={{color: 'blue', width:'75px', borderBottom: '3px solid blue'}}>If</span>
-                        <button className='rulemodule__header-delbtn' onClick={() => setRuleModules(ruleModules.splice(delKey, 1)) }>x</button>
+                        <button className='rulemodule__header-delbtn' onClick={() => deleteRuleModule(delKey.delKey)}>+</button>
                     </header>
-                    <div className="rulemodule__body" style={{boxShadow: '-5px 7px 3px 0px rgba(0, 98, 255, 1)'}}>
+                    <div className="rulemodule__body" style={{boxShadow: '-2px 3px 5px 0px rgba(0, 98, 255, 1)'}}>
                         <div className="rulemodule__body-item">
                             <select name="coin" className='rulemodule__body-selectcoin'>
                                 <option value="">any coin</option>
@@ -117,10 +125,11 @@ const Rules = () => {
         const ActionRule = (delKey) => {
             return (
                 <div className="rulemodule">
-                    <header className='rulemodule__header' style={{borderBottom: '3px solid green'}}>
-                        <span style={{color: 'green'}}>Action</span>
+                    <header className='rulemodule__header' style={{}}>
+                        <span style={{color: 'green', width:'75px', borderBottom: '3px solid green'}}>Action</span>
+                        <button className='rulemodule__header-delbtn' onClick={() => deleteRuleModule(delKey.delKey)}>+</button>
                     </header>
-                    <div className="rulemodule__body" style={{boxShadow: '-5px 7px 3px 0px #09a100'}}>
+                    <div className="rulemodule__body" style={{boxShadow: '-2px 3px 5px 0px #09a100'}}>
                         <div className="rulemodule__body-item">
                             <select name="buy" className='rulemodule__body-selectother'>
                                 <option value="BUY">BUY</option>
@@ -155,10 +164,11 @@ const Rules = () => {
         const OperatorRule = (delKey) => {
             return (
                 <div className="rulemodule">
-                    <header className='rulemodule__header' style={{borderBottom: '3px solid pink'}}>
-                        <span style={{color: 'pink'}}>Operator</span>
+                    <header className='rulemodule__header' style={{}}>
+                        <span style={{color: 'pink',width:'75px', borderBottom: '3px solid pink'}}>Operator</span>
+                        <button className='rulemodule__header-delbtn' onClick={() => deleteRuleModule(delKey.delKey)}>+</button>
                     </header>
-                    <div className="rulemodule__body" style={{boxShadow: '-5px 7px 3px 0px pink'}}>
+                    <div className="rulemodule__body" style={{boxShadow: '-2px 3px 5px 0px pink'}}>
                         <div className="rulemodule__body-item">
                             <select name="coin" className='rulemodule__body-selectcoin'>
                                 <option value="">any coin</option>
@@ -183,22 +193,27 @@ const Rules = () => {
             )
         }
 
-        const SpecsRule = (delKey) => {
+        
+
+        const SpecsRule = () => {
             return (
                 <div className="rulemodule">
                     <header className='rulemodule__header'>
                         <span style={{color: 'orange',borderBottom: '3px solid orange', width: '100px'}}>GO</span>
                     </header>
-                    <div className="rulemodule__body" style={{boxShadow: '-5px 7px 3px 0px orange', height: '150px'}}>
+                    <div className="rulemodule__body" style={{boxShadow: '-2px 3px 5px 0px orange', height: '120px'}}>
                         <div className="rulemodule__body-go">
                             <div className="rulemodule__body-go_item">Name your rule</div>
-                            <div className="rulemodule__body-go_item"><input type="text" id='rulename' placeholder='The best strategy in the world!'/></div>
+                            <div className="rulemodule__body-go_item">
+                            <form id="data"></form>
+                                <input id="rulename" form="data" name="ruleName" placeholder='The best strategy in the world!'/>
+                            </div>
                             <div className="rulemodule__body-go_time rulemodule__body-go_item">
                                 <div className="rulemodule__body-item" style={{margin: 'auto', marginRight: '10px'}}>Start</div>
                                 <div className="rulemodule__body-item">
                                     {/* <button></button> */}
                                     <input type="datetime-local" id="datetimeinput" name="trip-start"
-                                        onChange={(date) => {setStartDate(date.target.value); console.log(date.target.value)}}
+                                        onChange={(date) => {setStartDate(date.target.value)}}
                                         value={startDate}
                                         min={today} placeholder='Immediately' className='datepicker-input'/>
                                 </div>
@@ -210,7 +225,8 @@ const Rules = () => {
                                     <input type="number" id="datetimeinput" name="trip-start"
                                         style={{width: '30px', textAlign: 'center'}}
                                         onChange={(minutes) => setExecuteMinutes(Number(minutes.target.value))}
-                                        value={executeMinutes}
+                                        value={executeMinutes != 0 ? executeMinutes : ''}
+                                        placeholder='0'
                                         className='datepicker-input'/>
                                 </div>
                                 <div className="rulemodule__body-item" style={{margin: 'auto', marginRight: '10px'}}>
@@ -224,23 +240,37 @@ const Rules = () => {
             )
         }
         
-        return (
-            <>
-                {
-                    ruleType == 'IF'
-                    ? <IfRule delKey={delKey}/>
-                    : ruleType == 'ACTION'
-                    ? <ActionRule delKey={delKey}/>
-                    : ruleType == 'OPERATOR'
-                    ? <OperatorRule delKey={delKey}/>
-                    : <SpecsRule />
-                }
-            </>
-        )
-    }
+    //     return (
+    //         <>
+                // {
+                //     ruleType == 'IF'
+                //     ? <IfRule delKey={delKey}/>
+                //     : ruleType == 'ACTION'
+                //     ? <ActionRule delKey={delKey}/>
+                //     : ruleType == 'OPERATOR'
+                //     ? <OperatorRule delKey={delKey}/>
+                //     : <SpecsRule />
+                // }
+    //         </>
+    //     )
+    // }
+
 
     const addRuleBlock = (type) => {
-        setRuleModules(ruleModules.concat(<RuleModule type={type} key={ruleModules.length} />))
+        let Block = null
+        {
+            type == 'IF'
+            ? Block = <IfRule delKey={ruleModules.length}/>
+            : type == 'ACTION'
+            ? Block = <ActionRule delKey={ruleModules.length}/>
+            : type == 'OPERATOR'
+            ? Block =<OperatorRule delKey={ruleModules.length}/>
+            : Block =<SpecsRule />
+        }
+        setRuleModules(ruleModules.concat(
+        // <RuleModule type={type} key={ruleModules.length} />
+        Block
+        ))
     }
 
   return (
@@ -318,19 +348,19 @@ const Rules = () => {
                         <h4>Simple Sl and TP</h4>
                         <div className="stoploss_simple-stoploss stoploss_simple-element">
                             <div className='stoploss__element-text' >
-                                <span>Stop Loss</span>
+                                <span className='stoploss__element-text_left'>Stop Loss</span>
                                 <span 
                                 style={{backgroundColor: '#eee'}} 
                                 className='stoploss-input'
-                                >{stopLoss}</span>
+                                >{moneyValue - moneyValue/100*stopLoss}</span>
                             </div> 
                             <div className='stoploss__element-percent' >
                                 <input 
                                 style={{backgroundColor: '#eee'}} 
                                 type='number' 
                                 placeholder='0' 
-                                className='stoploss-input'
-                                value={stopLoss}
+                                className='stoploss__percent-input'
+                                value={stopLoss != 0 ? stopLoss : ''}
                                 onChange={(text) => setStopLoss(Number(text.target.value))}  
                                 />
                                 <span style={{color: '#fff'}}>%</span>
@@ -340,19 +370,19 @@ const Rules = () => {
                         
                         <div className="stoploss_simple-takeprofit stoploss_simple-element">
                             <div className='stoploss__element-text' >
-                                <span>Take Profit</span>
+                                <span className='stoploss__element-text_left'>Take Profit</span>
                                 <span 
                                 style={{backgroundColor: '#eee'}} 
                                 className='stoploss-input'
-                                >{takeProfit}</span>
+                                >{moneyValue - moneyValue/100*takeProfit}</span>
                             </div>
                             <div className='stoploss__element-percent' >
                                 <input 
                                 style={{backgroundColor: '#eee'}} 
                                 type='number' 
                                 placeholder='0' 
-                                className='stoploss-input'
-                                value={takeProfit}
+                                className='stoploss__percent-input'
+                                value={takeProfit != 0 ? takeProfit : ''}
                                 onChange={(text) => setTakeProfit(Number(text.target.value))}  
                                 />
                                 <span style={{color: '#fff'}}>%</span>
@@ -365,19 +395,19 @@ const Rules = () => {
                         <h4>Trailing Sl and TP</h4>
                         <div className="stoploss_simple-windowsize stoploss_simple-element">
                             <div className='stoploss__element-text' >
-                                <span>Window Size</span>
+                                <span className='stoploss__element-text_left'>Window Size</span>
                                 <span 
                                 style={{backgroundColor: '#eee'}} 
                                 className='stoploss-input'
-                                >{windowSize}</span>
+                                >{moneyValue - moneyValue/100*windowSize}</span>
                             </div>
                             <div className='stoploss__element-percent' >
                                 <input 
                                 style={{backgroundColor: '#eee'}} 
                                 type='number' 
                                 placeholder='0' 
-                                className='stoploss-input'
-                                value={windowSize}
+                                className='stoploss__percent-input'
+                                value={windowSize != 0 ? windowSize : ''}
                                 onChange={(text) => setWindowSize(Number(text.target.value))}   
                                 />
                                 <span style={{color: '#fff'}}>%</span>
@@ -387,19 +417,19 @@ const Rules = () => {
                         
                         <div className="stoploss_simple-insurancecoefficient stoploss_simple-element">
                             <div className='stoploss__element-text'>
-                                <span style={{fontSize: '0.75rem'}}>Insurance Coefficient</span>
+                                <span className='stoploss__element-text_left' style={{fontSize: '0.75rem', width: '100px'}}>Insurance Coefficient</span>
                                 <span 
                                 style={{backgroundColor: '#eee'}} 
                                 className='stoploss-input'
-                                >{insuranceCoefficient}</span>
+                                >{moneyValue - moneyValue/100*insuranceCoefficient}</span>
                             </div>
                             <div className='stoploss__element-percent'>
                                 <input 
                                 style={{backgroundColor: '#eee'}} 
                                 type='number' 
                                 placeholder='0' 
-                                className='stoploss-input'
-                                value={insuranceCoefficient}
+                                className='stoploss__percent-input'
+                                value={insuranceCoefficient != 0 ? insuranceCoefficient : ''}
                                 onChange={(text) => setInsuranceCoefficient(Number(text.target.value))}  
                                 />
                                 <span style={{color: '#fff'}}>%</span>
@@ -410,16 +440,30 @@ const Rules = () => {
             </div>
             <div className="strategy tb__main-block">
                 <h3>Create strategy</h3>
-                <RuleModule type={"SPECS"} />
-                <button className='addmodule-btn' style={{backgroundColor: 'blue'}} onClick={() => addRuleBlock('IF')}>If</button>
-                <button className='addmodule-btn' style={{backgroundColor: 'green'}} onClick={() => addRuleBlock('ACTION')}>Action</button>
-                <button className='addmodule-btn' style={{backgroundColor: 'pink'}} onClick={() => addRuleBlock('OPERATOR')}>Operator</button>
-                {ruleModules}
+                {/* <RuleModule type={"SPECS"} /> */}
+                <SpecsRule/>
+                
+                <div className="addmodule-btn_div">
+                    <button onClick={() => setToggleRuleBtn(!toggleRuleBtn)} className={`openbtns ${toggleRuleBtn ? 'rotateopenbtns' : ''}`} style={{}}>+</button>
+                    
+                    {toggleRuleBtn && (
+                        <div className={`addmodule-otherbtn_div ${toggleRuleBtn === false ? 'hidden' : '' }`}>
+                        <button className='addmodule-btn' style={{backgroundColor: 'blue'}} onClick={(e) => {addRuleBlock('IF'); console.log(e)}}>If</button>
+                        <button className='addmodule-btn' style={{backgroundColor: 'green'}} onClick={() => addRuleBlock('ACTION')}>Action</button>
+                        <button className='addmodule-btn' style={{backgroundColor: 'pink'}} onClick={() => addRuleBlock('OPERATOR')}>Operator</button>
+                        </div>
+                    )}
+                </div>
+                
+                
+                {ruleModules.map((ruleModule) => {
+                    return ruleModule
+                })}
 
 
             </div>
             <div className="valuepair tb__main-block">
-                <button className="savebtn" onClick={() => alert('пока пусто')}>Save rule</button>
+                <button className="savebtn" onClick={() => alert('пока пусто')} type="submit" form="data">Save rule</button>
             </div>
         </div>
     </div>
